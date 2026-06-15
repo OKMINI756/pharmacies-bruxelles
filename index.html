@@ -486,13 +486,16 @@ td,.sens,.tel-link{-webkit-user-select:none;-moz-user-select:none;user-select:no
 (function(){
 ['contextmenu','copy','cut','dragstart'].forEach(function(ev){document.addEventListener(ev,function(e){e.preventDefault();});});
 document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if((e.ctrlKey||e.metaKey)&&['c','a','s','x'].indexOf(k)>-1)e.preventDefault();});
-function toImg(txt){var c=document.createElement('canvas'),k=c.getContext('2d');k.font='13px monospace';var w=Math.ceil(k.measureText(txt).width)+6;c.width=w*2;c.height=34;var x=c.getContext('2d');x.scale(2,2);x.font='13px monospace';x.textBaseline='middle';x.fillStyle='#e7edf6';x.fillText(txt,1,9);var im=new Image();im.src=c.toDataURL();im.draggable=false;return im;}
-function reBtn(s){var lbl=s.getAttribute('data-k')==='t'?'📞 Voir':'👤 Voir';s.classList.remove('shown');s.innerHTML='<button class="rv">'+lbl+'</button>';}
+function toImg(txt){var c=document.createElement('canvas'),k=c.getContext('2d');k.font='13px monospace';var w=Math.ceil(k.measureText(txt).width)+10;c.width=w*2;c.height=38;var x=c.getContext('2d');x.scale(2,2);x.font='13px monospace';x.textBaseline='middle';x.fillStyle='#e7edf6';x.fillText(txt,1,10);var im=new Image();im.src=c.toDataURL();im.draggable=false;im.style.maxWidth='none';return im;}
+var GLOB=null;
+function reBtn(s){var lbl=s.getAttribute('data-k')==='t'?'📞 Voir':'👤 Voir';s.classList.remove('shown');s.innerHTML='<button class="rv">'+lbl+'</button>';var td=s.closest('td');if(td){td.style.maxWidth='';td.style.whiteSpace='';}}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.rv');if(!b)return;
- var span=b.closest('.sens'),tr=b.closest('tr');if(!span)return;
- if(tr){var shown=tr.querySelectorAll('.sens.shown');for(var i=0;i<shown.length;i++)reBtn(shown[i]);}  // exclusivité : masque l'autre champ sensible de la ligne
+ var span=b.closest('.sens');if(!span)return;
+ if(GLOB&&GLOB!==span)reBtn(GLOB);  // EXCLUSIVITÉ GLOBALE : une seule valeur révélée sur toute la page à la fois
  var val=decodeURIComponent(escape(atob(span.getAttribute('data-v'))));
- span.innerHTML='';span.appendChild(toImg(val));span.classList.add('shown');});
+ span.innerHTML='';span.appendChild(toImg(val));span.classList.add('shown');
+ var td=span.closest('td');if(td){td.style.maxWidth='none';td.style.whiteSpace='nowrap';}  // nom/prénom complet, non coupé
+ GLOB=span;});
 })();
 </script>
 </body>
